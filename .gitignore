@@ -38,3 +38,6 @@ lerna-debug.log*
 # Test coverage
 coverage/
 .vitest/
+
+# astro
+.astro/
