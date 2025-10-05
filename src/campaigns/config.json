@@ -1,0 +1,21 @@
+{
+  "title": "Example Campaign",
+  "description": "An example pressure campaign to contact your MP about an important issue",
+  "slug": "example-campaign",
+  "emailSubject": "Urgent: Your constituent's concerns about [Issue]",
+  "emailTemplate": "email-to-mp",
+  "userEmailSubject": "Confirm your campaign signature",
+  "userEmailTemplate": "magic-link",
+  "thankYouMessage": "Thank you for making your voice heard! Your MP has been contacted.",
+  "cc": [],
+  "bcc": [],
+  "styling": {
+    "primaryColor": "#1d70b8",
+    "logoUrl": "/favicon.svg"
+  },
+  "footer": {
+    "organizationName": "Your Organization",
+    "organizationUrl": "https://example.org"
+  }
+}
+

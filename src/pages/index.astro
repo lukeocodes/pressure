@@ -1,16 +1,154 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import { getCampaign } from '../lib/utils';
 
+export const prerender = false;
+
+const campaign = getCampaign();
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Take Action">
+  <div class="hero">
+    <h2>{campaign.title}</h2>
+    <p class="lead">{campaign.description}</p>
+  </div>
+
+  <div class="form-container">
+    <h3>Contact Your MP</h3>
+    <p>Fill in your details below to send a message to your Member of Parliament.</p>
+
+    <form id="campaignForm">
+      <div class="form-group">
+        <label for="name">Your Name *</label>
+        <input type="text" id="name" name="name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Your Email *</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+
+      <div class="form-group">
+        <label for="postcode">Your Postcode *</label>
+        <input type="text" id="postcode" name="postcode" placeholder="e.g. SW1A 1AA" required />
+        <small>We'll use this to find your MP</small>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Your Address *</label>
+        <textarea id="address" name="address" rows="3" required></textarea>
+      </div>
+
+      <div id="error" class="error" style="display: none;"></div>
+      <div id="success" class="success" style="display: none;"></div>
+
+      <button type="submit" id="submitBtn">
+        Find My MP and Continue
+      </button>
+    </form>
+  </div>
+
+  <style>
+    .hero {
+      margin-bottom: 40px;
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .lead {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+
+    .form-container {
+      max-width: 600px;
+    }
+
+    .form-container h3 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+
+    small {
+      display: block;
+      margin-top: 5px;
+      color: #505a5f;
+    }
+  </style>
+
+  <script>
+    const form = document.getElementById('campaignForm') as HTMLFormElement;
+    const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
+    const errorDiv = document.getElementById('error') as HTMLDivElement;
+    const successDiv = document.getElementById('success') as HTMLDivElement;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Hide previous messages
+      errorDiv.style.display = 'none';
+      successDiv.style.display = 'none';
+      
+      // Disable button and show loading
+      submitBtn.disabled = true;
+      const originalText = submitBtn.textContent;
+      submitBtn.innerHTML = '<span class="loading"></span>Finding your MP...';
+      
+      try {
+        const formData = new FormData(form);
+        const data = {
+          name: formData.get('name') as string,
+          email: formData.get('email') as string,
+          postcode: formData.get('postcode') as string,
+          address: formData.get('address') as string,
+        };
+        
+        // Find MP
+        const mpResponse = await fetch('/api/find-mp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ postcode: data.postcode }),
+        });
+        
+        if (!mpResponse.ok) {
+          const error = await mpResponse.json();
+          throw new Error(error.error || 'Failed to find MP');
+        }
+        
+        const { mp } = await mpResponse.json();
+        
+        // Send magic link
+        submitBtn.textContent = 'Sending confirmation email...';
+        
+        const magicLinkResponse = await fetch('/api/send-magic-link', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, mp }),
+        });
+        
+        if (!magicLinkResponse.ok) {
+          const error = await magicLinkResponse.json();
+          throw new Error(error.error || 'Failed to send confirmation email');
+        }
+        
+        // Show success message
+        successDiv.textContent = `Success! We've sent a confirmation email to ${data.email}. Please check your inbox and click the link to complete your action.`;
+        successDiv.style.display = 'block';
+        
+        // Reset form
+        form.reset();
+        submitBtn.textContent = originalText || 'Find My MP and Continue';
+        submitBtn.disabled = false;
+        
+      } catch (error) {
+        errorDiv.textContent = error instanceof Error ? error.message : 'An error occurred. Please try again.';
+        errorDiv.style.display = 'block';
+        submitBtn.textContent = originalText || 'Find My MP and Continue';
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</Layout>

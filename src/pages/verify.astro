@@ -1,0 +1,83 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+export const prerender = false;
+
+// Get token from URL query parameter
+const url = new URL(Astro.request.url);
+const token = url.searchParams.get('token');
+
+if (!token) {
+  return Astro.redirect('/');
+}
+---
+
+<Layout title="Verify Your Action">
+  <div class="verify-container">
+    <h2>Verifying Your Action</h2>
+    <p>Please wait while we verify your details and send your message to your MP...</p>
+    
+    <div id="loading" class="loading-container">
+      <span class="loading"></span>
+      <span>Processing...</span>
+    </div>
+    
+    <div id="error" class="error" style="display: none;"></div>
+  </div>
+
+  <style>
+    .verify-container {
+      max-width: 600px;
+      text-align: center;
+      margin: 60px auto;
+    }
+
+    .verify-container h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .loading-container {
+      margin: 40px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 1.1rem;
+    }
+  </style>
+
+  <script define:vars={{ token }}>
+    async function verifyToken() {
+      try {
+        const response = await fetch('/api/verify-and-send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token }),
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Verification failed');
+        }
+        
+        // Redirect to thank you page on success
+        window.location.href = '/thank-you';
+        
+      } catch (error) {
+        const loadingDiv = document.getElementById('loading');
+        const errorDiv = document.getElementById('error');
+        
+        if (loadingDiv) loadingDiv.style.display = 'none';
+        if (errorDiv) {
+          errorDiv.textContent = error instanceof Error ? error.message : 'An error occurred during verification.';
+          errorDiv.style.display = 'block';
+        }
+      }
+    }
+    
+    // Start verification when page loads
+    verifyToken();
+  </script>
+</Layout>
+

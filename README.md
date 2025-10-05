@@ -1,43 +1,309 @@
-# Astro Starter Kit: Minimal
+# Pressure 📧
 
-```sh
-npm create astro@latest -- --template minimal
+An open-source platform for running UK government pressure campaigns. Enables anyone to launch their own campaign to contact Members of Parliament on behalf of concerned citizens.
+
+## Features
+
+- 🏛️ **MP Lookup** - Automatically finds MPs using UK Government APIs
+- 📧 **Magic Link Verification** - Secure double opt-in process
+- 🔌 **Provider-Agnostic Email** - Swap email providers without code changes
+- 🚀 **Netlify Deployment** - Serverless architecture with built-in scalability
+- 🎨 **Fully Customizable** - Configure campaigns via JSON and templates
+- 🔒 **Secure** - One-time use tokens, rate limiting, input validation
+- ♿ **Accessible** - Built following GOV.UK design principles
+
+## How It Works
+
+1. **User fills in details** - Name, email, UK postcode, and address
+2. **Service locates MP** - Queries UK Parliament API by postcode
+3. **User verifies details** - Confirms MP information and agrees to send
+4. **Magic link sent** - Secure token emailed to user
+5. **User clicks link** - Validates identity and authorization
+6. **Email dispatched** - Message sent to MP (CC'ing user)
+7. **Confirmation** - User redirected to thank you page
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- npm or pnpm
+- Netlify account (for deployment)
+
+### Local Development
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/lukeocodes/pressure.git
+cd pressure
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+2. Install dependencies:
 
-## 🚀 Project Structure
+```bash
+npm install
+```
 
-Inside of your Astro project, you'll see the following folders and files:
+3. Create a `.env` file (ask the user to configure):
 
-```text
+```env
+EMAIL_PROVIDER=console
+JWT_SECRET=your-secret-key-change-in-production
+BASE_URL=http://localhost:8888
+```
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
+
+5. Visit `http://localhost:8888`
+
+### Running Tests
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Run tests with UI
+pnpm test:ui
+
+# Generate coverage report
+pnpm test:coverage
+```
+
+See [docs/Testing.md](docs/Testing.md) for detailed testing documentation.
+
+## Configuration
+
+### Campaign Configuration
+
+Edit `src/campaigns/config.json` to customize your campaign:
+
+```json
+{
+  "title": "Your Campaign Title",
+  "description": "Campaign description and call to action",
+  "emailSubject": "Subject line for MP emails",
+  "cc": ["advocacy@yourorg.org"],
+  "bcc": ["tracking@yourorg.org"],
+  "styling": {
+    "primaryColor": "#1d70b8",
+    "logoUrl": "/logo.svg"
+  },
+  "footer": {
+    "organizationName": "Your Organization",
+    "organizationUrl": "https://yourorg.org"
+  }
+}
+```
+
+### Environment Variables
+
+Configure these in Netlify or your `.env` file:
+
+| Variable          | Description                                               | Required | Default             |
+| ----------------- | --------------------------------------------------------- | -------- | ------------------- |
+| `EMAIL_PROVIDER`  | Email service provider (`console`, `sendgrid`, `mailgun`) | No       | `console`           |
+| `EMAIL_API_KEY`   | API key for email provider                                | Yes\*    | -                   |
+| `EMAIL_FROM`      | Sender email address                                      | Yes      | -                   |
+| `EMAIL_FROM_NAME` | Sender name                                               | No       | `Pressure Campaign` |
+| `JWT_SECRET`      | Secret for magic link tokens                              | Yes      | -                   |
+| `BASE_URL`        | Base URL for magic links                                  | Yes\*\*  | -                   |
+| `MAILGUN_DOMAIN`  | Mailgun domain (if using Mailgun)                         | Yes\*    | -                   |
+
+\* Required for production email providers  
+\*\* Auto-detected on Netlify
+
+### Email Providers
+
+The platform supports multiple email providers. Configure via `EMAIL_PROVIDER`:
+
+- **console** (default) - Logs emails to console (development only)
+- **sendgrid** - SendGrid API (requires `EMAIL_API_KEY`)
+- **mailgun** - Mailgun API (requires `EMAIL_API_KEY` and `MAILGUN_DOMAIN`)
+
+To add a new provider, see `docs/Email Service Abstraction.md`.
+
+## Deployment
+
+### Deploy to Netlify
+
+1. Push your code to GitHub
+2. Connect your repository to Netlify
+3. Configure environment variables in Netlify dashboard
+4. Deploy!
+
+Netlify will automatically:
+
+- Build your Astro site
+- Deploy serverless functions
+- Set up redirects for API routes
+- Provide HTTPS
+
+### Manual Deployment
+
+```bash
+npm run build
+netlify deploy --prod
+```
+
+## Project Structure
+
+```
 /
-├── public/
+├── docs/                    # Documentation
+│   ├── Architecture.md
+│   ├── Campaign Configuration.md
+│   └── Email Service Abstraction.md
+├── netlify/
+│   └── functions/           # Serverless backend
+│       ├── find-mp.ts
+│       ├── send-magic-link.ts
+│       └── verify-and-send.ts
 ├── src/
+│   ├── campaigns/
+│   │   └── config.json      # Campaign configuration
+│   ├── components/          # Reusable components
+│   ├── layouts/
+│   │   └── Layout.astro     # Base layout
+│   ├── lib/
+│   │   ├── api/
+│   │   │   └── parliament.ts   # UK Parliament API client
+│   │   ├── email/
+│   │   │   ├── factory.ts      # Email service factory
+│   │   │   ├── service.ts      # Email interface
+│   │   │   └── providers/      # Email provider adapters
+│   │   ├── types.ts            # TypeScript types
+│   │   └── utils.ts            # Utility functions
 │   └── pages/
-│       └── index.astro
-└── package.json
+│       ├── index.astro         # Landing page
+│       ├── verify.astro        # Magic link verification
+│       └── thank-you.astro     # Confirmation page
+├── netlify.toml             # Netlify configuration
+└── astro.config.mjs         # Astro configuration
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Customization
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### Change Campaign Content
 
-Any static assets, like images, can be placed in the `public/` directory.
+1. Edit `src/campaigns/config.json`
+2. Customize page content in `src/pages/*.astro`
+3. Update styling in `src/layouts/Layout.astro`
 
-## 🧞 Commands
+### Add Custom Email Templates
 
-All commands are run from the root of the project, from a terminal:
+Create Astro components in `src/templates/email/` and reference them in your campaign config.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+### Multi-Campaign Support
 
-## 👀 Want to learn more?
+To host multiple campaigns:
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+1. Create separate config files
+2. Add routing logic to load appropriate config
+3. Deploy with different environment variables per branch
+
+## Security
+
+- Magic links expire after 1 hour
+- One-time use tokens (consumed after verification)
+- Rate limiting on serverless functions
+- Input validation and sanitization
+- CORS configuration for API endpoints
+- No sensitive data stored (stateless operations)
+
+## Contributing
+
+Contributions are welcome! This is an open-source project designed to empower civic engagement.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Write tests for your changes
+4. Ensure all tests pass (`pnpm test`)
+5. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
+
+## API Reference
+
+### POST `/api/find-mp`
+
+Find MP by postcode.
+
+**Request:**
+
+```json
+{
+  "postcode": "SW1A 1AA"
+}
+```
+
+**Response:**
+
+```json
+{
+  "mp": {
+    "name": "John Smith",
+    "constituency": "Example Constituency",
+    "party": "Example Party",
+    "email": "john.smith@parliament.uk"
+  }
+}
+```
+
+### POST `/api/send-magic-link`
+
+Send magic link verification email.
+
+**Request:**
+
+```json
+{
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "postcode": "SW1A 1AA",
+  "address": "123 Example Street",
+  "mp": { ... }
+}
+```
+
+### POST `/api/verify-and-send`
+
+Verify magic link token and send email to MP.
+
+**Request:**
+
+```json
+{
+  "token": "jwt-token-here"
+}
+```
+
+## License
+
+ISC License - see [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Built with [Astro](https://astro.build)
+- Uses [UK Parliament API](https://members-api.parliament.uk/)
+- Uses [Postcodes.io](https://postcodes.io) for constituency lookup
+- Inspired by GOV.UK design principles
+
+## Support
+
+- 📖 [Read the docs](docs/)
+- 🐛 [Report a bug](https://github.com/lukeocodes/pressure/issues)
+- 💡 [Request a feature](https://github.com/lukeocodes/pressure/issues)
+
+---
+
+Made with ❤️ for civic engagement. Power to the people! 🙌

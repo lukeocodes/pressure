@@ -1,14 +1,45 @@
 {
   "name": "pressure",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "description": "Open-source platform for UK government pressure campaigns",
+  "author": "Luke Oliff <code@lukeoliff.com>",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lukeocodes/pressure.git"
+  },
+  "keywords": [
+    "activism",
+    "campaign",
+    "uk-parliament",
+    "civic-engagement",
+    "government",
+    "astro",
+    "netlify"
+  ],
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "astro": "^5.14.1"
+    "@astrojs/netlify": "^6.5.11",
+    "@netlify/functions": "^4.2.7",
+    "astro": "^5.14.1",
+    "jsonwebtoken": "^9.0.2",
+    "nanoid": "^5.1.6",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.6.2",
+    "@vitest/ui": "^3.2.4",
+    "vitest": "^3.2.4"
   }
 }

@@ -1,0 +1,110 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCampaign } from '../lib/utils';
+
+const campaign = getCampaign();
+---
+
+<Layout title="Thank You">
+  <div class="thank-you-container">
+    <h2>✓ Thank You!</h2>
+    <p class="message">{campaign.thankYouMessage}</p>
+    
+    <div class="info-box">
+      <h3>What happens next?</h3>
+      <ul>
+        <li>Your email has been sent to your Member of Parliament</li>
+        <li>A copy has been sent to your email address</li>
+        <li>Your MP's office will review your message</li>
+        <li>You may receive a response directly from your MP</li>
+      </ul>
+    </div>
+
+    <div class="share-section">
+      <h3>Spread the Word</h3>
+      <p>Help amplify this campaign by sharing it with friends and family:</p>
+      <div class="share-buttons">
+        <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(campaign.title + ' - ' + campaign.description)}&url=${encodeURIComponent(Astro.url.origin)}`} 
+           target="_blank" 
+           rel="noopener"
+           class="button share-button">
+          Share on Twitter
+        </a>
+        <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(Astro.url.origin)}`}
+           target="_blank"
+           rel="noopener"
+           class="button share-button">
+          Share on Facebook
+        </a>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a href="/" class="button">Return to Campaign Page</a>
+    </div>
+  </div>
+
+  <style>
+    .thank-you-container {
+      max-width: 700px;
+      margin: 40px auto;
+    }
+
+    .thank-you-container h2 {
+      font-size: 2.5rem;
+      color: var(--success-color);
+      margin-bottom: 20px;
+    }
+
+    .message {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+
+    .info-box {
+      background-color: #f3f2f1;
+      padding: 25px;
+      border-left: 4px solid var(--primary-color);
+      margin-bottom: 30px;
+    }
+
+    .info-box h3 {
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+
+    .info-box ul {
+      list-style-position: inside;
+      line-height: 1.8;
+    }
+
+    .share-section {
+      margin-bottom: 30px;
+    }
+
+    .share-section h3 {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+    }
+
+    .share-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .share-button {
+      background-color: #00703c;
+    }
+
+    .share-button:hover {
+      background-color: #005a30;
+    }
+
+    .actions {
+      margin-top: 40px;
+    }
+  </style>
+</Layout>
+
