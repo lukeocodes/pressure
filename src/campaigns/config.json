@@ -1,8 +1,8 @@
 {
-  "title": "Example Campaign",
-  "description": "An example pressure campaign to contact your MP about an important issue",
-  "slug": "example-campaign",
-  "emailSubject": "Urgent: Your constituent's concerns about [Issue]",
+  "title": "Stop the complicity",
+  "description": "Contact your MP now to demand the UK end complicity in Gaza: push for a full arms embargo, enforce ICJ & ICC rulings, and guarantee humanitarian access.",
+  "slug": "stop-the-complicity",
+  "emailSubject": "Urgent: Your constituent's concerns about Gaza & UK policy",
   "emailTemplate": "email-to-mp",
   "userEmailSubject": "Confirm your campaign signature",
   "userEmailTemplate": "magic-link",
@@ -11,11 +11,12 @@
   "bcc": [],
   "styling": {
     "primaryColor": "#1d70b8",
-    "logoUrl": "/favicon.svg"
+    "logoUrl": "/icon.svg",
+    "bannerUrl": "/banner.jpg"
   },
   "footer": {
-    "organizationName": "Your Organization",
-    "organizationUrl": "https://example.org"
+    "organizationName": "Luke Oliff",
+    "organizationUrl": "https://lu.ke.wtf"
   },
-  "emailBody": "Optional custom email body that replaces the description in emails to MPs.\n\nUse \\n\\n for paragraph breaks.\n\nThis allows for detailed, structured content while keeping the description field short for UI display."
+  "emailBody": "I am writing to express deep concern about the UK’s ongoing complicity in the suffering of Palestinians in Gaza.\n\nThe International Court of Justice has ordered Israel to halt actions in Rafah that risk destroying the group in whole or in part, and to allow humanitarian aid. Yet UK arms exports continue, and our government has failed to apply its own licensing criteria. This makes the UK complicit in serious violations of international law.\n\nI am urging you to:\n\n1. Support a full, immediate suspension of all UK arms export licences to Israel.\n2. Press ministers to respect and enforce ICJ and ICC rulings.\n3. Demand unhindered humanitarian aid access to Gaza.\n4. Publicly call for a lasting ceasefire and the protection of civilians, medics, and journalists.\n\nThe situation in Gaza meets the legal definition of genocide. The UK has a moral and legal duty to prevent and punish it, not to enable it through trade and political cover.\n\nPlease confirm what actions you will take to uphold these obligations."
 }
