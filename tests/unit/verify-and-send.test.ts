@@ -9,7 +9,6 @@ describe('verify-and-send function', () => {
         email: 'john@example.com',
         name: 'John Doe',
         postcode: 'WC1E 6BT',
-        address: '123 Test Street',
         mpEmail: 'keir.starmer.mp@parliament.uk',
         mpName: 'Keir Starmer',
         constituency: 'Holborn and St Pancras',
@@ -200,8 +199,8 @@ describe('verify-and-send function', () => {
 
         const emailCall = mockEmailService.sendEmail.mock.calls[0][0];
         expect(emailCall.text).toContain('John Doe');
-        expect(emailCall.text).toContain('123 Test Street');
         expect(emailCall.text).toContain('WC1E 6BT');
+        expect(emailCall.text).toContain('Holborn and St Pancras');
         expect(emailCall.text).toContain('Keir Starmer');
         expect(emailCall.html).toContain('John Doe');
     });

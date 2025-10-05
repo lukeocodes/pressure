@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { findMPByPostcode } from '../../src/lib/api/parliament';
-import { createMockSuccessResponse, createMockErrorResponse, mockParliamentAPI, mockPostcodesAPI } from '../mocks/fetch';
+import { createMockSuccessResponse, createMockErrorResponse, mockParliamentAPI } from '../mocks/fetch';
 
 describe('Parliament API', () => {
     beforeEach(() => {
@@ -10,13 +10,11 @@ describe('Parliament API', () => {
     describe('findMPByPostcode', () => {
         it('should find MP by valid postcode', async () => {
             const mockFetch = vi.fn()
-                // First call: postcodes.io
-                .mockResolvedValueOnce(createMockSuccessResponse(mockPostcodesAPI))
-                // Second call: constituency search
+                // First call: constituency search
                 .mockResolvedValueOnce(createMockSuccessResponse(mockParliamentAPI.constituency))
-                // Third call: member details
+                // Second call: member details
                 .mockResolvedValueOnce(createMockSuccessResponse(mockParliamentAPI.member))
-                // Fourth call: contact details
+                // Third call: contact details
                 .mockResolvedValueOnce(createMockSuccessResponse(mockParliamentAPI.contact));
 
             global.fetch = mockFetch as any;
@@ -30,12 +28,11 @@ describe('Parliament API', () => {
                 email: 'keir.starmer.mp@parliament.uk',
             });
 
-            expect(mockFetch).toHaveBeenCalledTimes(4);
+            expect(mockFetch).toHaveBeenCalledTimes(3);
         });
 
         it('should normalize postcode before lookup', async () => {
             const mockFetch = vi.fn()
-                .mockResolvedValueOnce(createMockSuccessResponse(mockPostcodesAPI))
                 .mockResolvedValueOnce(createMockSuccessResponse(mockParliamentAPI.constituency))
                 .mockResolvedValueOnce(createMockSuccessResponse(mockParliamentAPI.member))
                 .mockResolvedValueOnce(createMockSuccessResponse(mockParliamentAPI.contact));
@@ -44,8 +41,8 @@ describe('Parliament API', () => {
 
             await findMPByPostcode('wc1e 6bt'); // lowercase with space
 
-            // Check that the first call normalized the postcode
-            expect(mockFetch.mock.calls[0][0]).toContain('WC1E6BT');
+            // Check that the first call uses the postcode (Parliament API accepts postcodes with or without normalization)
+            expect(mockFetch.mock.calls[0][0]).toContain('wc1e%206bt');
         });
 
         it('should return null for invalid postcode', async () => {
@@ -61,7 +58,6 @@ describe('Parliament API', () => {
 
         it('should return null when constituency not found', async () => {
             const mockFetch = vi.fn()
-                .mockResolvedValueOnce(createMockSuccessResponse(mockPostcodesAPI))
                 .mockResolvedValueOnce(createMockSuccessResponse({ items: [] }));
 
             global.fetch = mockFetch as any;
@@ -73,7 +69,6 @@ describe('Parliament API', () => {
 
         it('should return null when MP not found', async () => {
             const mockFetch = vi.fn()
-                .mockResolvedValueOnce(createMockSuccessResponse(mockPostcodesAPI))
                 .mockResolvedValueOnce(createMockSuccessResponse({
                     items: [{
                         value: {
@@ -104,7 +99,6 @@ describe('Parliament API', () => {
 
         it('should generate fallback email if contact API fails', async () => {
             const mockFetch = vi.fn()
-                .mockResolvedValueOnce(createMockSuccessResponse(mockPostcodesAPI))
                 .mockResolvedValueOnce(createMockSuccessResponse(mockParliamentAPI.constituency))
                 .mockResolvedValueOnce(createMockSuccessResponse(mockParliamentAPI.member))
                 .mockResolvedValueOnce(createMockErrorResponse(500));

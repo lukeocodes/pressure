@@ -7,11 +7,13 @@ export interface Campaign {
   userEmailSubject: string;
   userEmailTemplate: string;
   thankYouMessage: string;
+  emailBody?: string; // Optional custom email body (replaces description in email)
   cc: string[];
   bcc: string[];
   styling: {
     primaryColor: string;
     logoUrl: string;
+    bannerUrl?: string; // Optional banner image for header
   };
   footer: {
     organizationName: string;
@@ -30,14 +32,12 @@ export interface UserDetails {
   name: string;
   email: string;
   postcode: string;
-  address: string;
 }
 
 export interface MagicLinkPayload {
   email: string;
   name: string;
   postcode: string;
-  address: string;
   mpEmail: string;
   mpName: string;
   constituency: string;

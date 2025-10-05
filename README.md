@@ -55,11 +55,21 @@ BASE_URL=http://localhost:8888
 
 4. Start the development server:
 
+**With mock APIs (recommended for local dev):**
+
 ```bash
-npm run dev
+pnpm dev:mock
 ```
 
-5. Visit `http://localhost:8888`
+**With real APIs:**
+
+```bash
+pnpm dev
+```
+
+5. Visit `http://localhost:4321`
+
+See [docs/Local Development.md](docs/Local%20Development.md) for detailed development guide.
 
 ### Running Tests
 
@@ -197,9 +207,12 @@ netlify deploy --prod
 2. Customize page content in `src/pages/*.astro`
 3. Update styling in `src/layouts/Layout.astro`
 
-### Add Custom Email Templates
+### Customize Email Templates
 
-Create Astro components in `src/templates/email/` and reference them in your campaign config.
+Edit the email content directly in the Netlify functions:
+
+- Magic link email: `netlify/functions/send-magic-link.ts`
+- Email to MP: `netlify/functions/verify-and-send.ts`
 
 ### Multi-Campaign Support
 
@@ -289,14 +302,29 @@ Verify magic link token and send email to MP.
 
 ## License
 
-ISC License - see [LICENSE](LICENSE) file for details.
+This project is licensed under the ISC License - see [LICENSE](LICENSE) file for details.
+
+### Parliamentary Data Attribution
+
+This project uses Parliamentary information from the UK Parliament Members API.
+
+**Contains Parliamentary information licensed under the [Open Parliament Licence v3.0](https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/).**
+
+Important notes:
+
+- This project is **not** endorsed by or affiliated with the UK Parliament
+- Parliamentary information is provided "as is" without warranty
+- No personal data from Parliamentary sources is stored by this application
+
+See [ATTRIBUTION.md](ATTRIBUTION.md) for full licensing details and compliance information.
 
 ## Acknowledgments
 
 - Built with [Astro](https://astro.build)
-- Uses [UK Parliament API](https://members-api.parliament.uk/)
-- Uses [Postcodes.io](https://postcodes.io) for constituency lookup
+- Uses [UK Parliament Members API](https://members-api.parliament.uk/) - Parliamentary information licensed under the Open Parliament Licence v3.0
+- Uses [Postcodes.io](https://postcodes.io) for constituency lookup (Open Government Licence)
 - Inspired by GOV.UK design principles
+- **Not endorsed by or affiliated with the UK Parliament**
 
 ## Support
 

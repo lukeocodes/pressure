@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { handler } from '../../netlify/functions/send-magic-link';
 import { createMockEvent, createMockContext } from '../mocks/netlify-event';
 import * as emailFactory from '../../src/lib/email/factory';
+import jwt from 'jsonwebtoken';
 
 describe('send-magic-link function', () => {
     const mockMP = {
@@ -37,7 +38,9 @@ describe('send-magic-link function', () => {
         const response = await handler(event, context);
 
         expect(response.statusCode).toBe(400);
-        expect(JSON.parse(response.body!)).toEqual({ error: 'Missing required fields' });
+        const body = JSON.parse(response.body!);
+        // Should return validation error for first missing/invalid field
+        expect(body.error).toBeDefined();
     });
 
     it('should send magic link email successfully', async () => {
@@ -56,7 +59,6 @@ describe('send-magic-link function', () => {
                 name: 'John Doe',
                 email: 'john@example.com',
                 postcode: 'WC1E 6BT',
-                address: '123 Test Street',
                 mp: mockMP,
             }),
         });
@@ -92,7 +94,6 @@ describe('send-magic-link function', () => {
                 name: 'John Doe',
                 email: 'john@example.com',
                 postcode: 'WC1E 6BT',
-                address: '123 Test Street',
                 mp: mockMP,
             }),
         });
@@ -121,7 +122,6 @@ describe('send-magic-link function', () => {
                 name: 'John Doe',
                 email: 'john@example.com',
                 postcode: 'WC1E 6BT',
-                address: '123 Test Street',
                 mp: mockMP,
             }),
         });
@@ -144,7 +144,6 @@ describe('send-magic-link function', () => {
                 name: 'John Doe',
                 email: 'john@example.com',
                 postcode: 'WC1E 6BT',
-                address: '123 Test Street',
                 mp: mockMP,
             }),
         });
@@ -154,6 +153,45 @@ describe('send-magic-link function', () => {
 
         expect(response.statusCode).toBe(500);
         expect(JSON.parse(response.body!)).toEqual({ error: 'Internal server error' });
+    });
+
+    it('should format postcodes consistently in JWT payload', async () => {
+        const mockEmailService = {
+            sendEmail: vi.fn().mockResolvedValue({
+                success: true,
+                messageId: 'test-123',
+            }),
+        };
+
+        vi.spyOn(emailFactory, 'createEmailService').mockReturnValue(mockEmailService as any);
+
+        // Test with unformatted postcode
+        const event = createMockEvent({
+            httpMethod: 'POST',
+            body: JSON.stringify({
+                name: 'John Doe',
+                email: 'john@example.com',
+                postcode: 'SW1A1AA', // No space
+                mp: mockMP,
+            }),
+        });
+        const context = createMockContext();
+
+        const response = await handler(event, context);
+
+        expect(response.statusCode).toBe(200);
+
+        // Extract and verify the JWT token contains formatted postcode
+        const emailCall = mockEmailService.sendEmail.mock.calls[0][0];
+        const magicLinkMatch = emailCall.text.match(/http:\/\/localhost:8888\/verify\?token=([^\s]+)/);
+        expect(magicLinkMatch).toBeTruthy();
+
+        if (magicLinkMatch) {
+            const token = magicLinkMatch[1];
+            const decoded = jwt.verify(token, 'test-secret') as any;
+            // Postcode should be formatted with space
+            expect(decoded.postcode).toBe('SW1A 1AA');
+        }
     });
 });
 

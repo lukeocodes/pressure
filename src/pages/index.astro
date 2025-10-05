@@ -1,6 +1,6 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { getCampaign } from '../lib/utils';
+import Layout from "../layouts/Layout.astro";
+import { getCampaign } from "../lib/utils";
 
 export const prerender = false;
 
@@ -15,36 +15,98 @@ const campaign = getCampaign();
 
   <div class="form-container">
     <h3>Contact Your MP</h3>
-    <p>Fill in your details below to send a message to your Member of Parliament.</p>
+    <p>
+      Fill in your details below to send a message to your Member of Parliament.
+    </p>
 
     <form id="campaignForm">
       <div class="form-group">
         <label for="name">Your Name *</label>
-        <input type="text" id="name" name="name" required />
+        <div class="input-with-validation">
+          <input type="text" id="name" name="name" required />
+          <span id="nameStatus" class="validation-icon"></span>
+        </div>
+        <div id="nameError" class="field-error" style="display: none;"></div>
       </div>
 
       <div class="form-group">
         <label for="email">Your Email *</label>
-        <input type="email" id="email" name="email" required />
+        <div class="input-with-validation">
+          <input type="email" id="email" name="email" required />
+          <span id="emailStatus" class="validation-icon"></span>
+        </div>
+        <div id="emailError" class="field-error" style="display: none;"></div>
       </div>
 
       <div class="form-group">
         <label for="postcode">Your Postcode *</label>
-        <input type="text" id="postcode" name="postcode" placeholder="e.g. SW1A 1AA" required />
+        <div class="input-with-validation">
+          <input
+            type="text"
+            id="postcode"
+            name="postcode"
+            placeholder="e.g. SW1A 1AA"
+            required
+          />
+          <span id="postcodeStatus" class="validation-icon"></span>
+        </div>
         <small>We'll use this to find your MP</small>
+        <div id="postcodeError" class="field-error" style="display: none;">
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="address">Your Address *</label>
-        <textarea id="address" name="address" rows="3" required></textarea>
+      <div id="mpDetails" class="mp-details" style="display: none;">
+        <h4>Your Member of Parliament</h4>
+        <div class="mp-card">
+          <div class="mp-info">
+            <p class="mp-name" id="mpName"></p>
+            <p class="mp-meta">
+              <span id="mpConstituency"></span> · <span id="mpParty"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="emailPreviewSection" style="display: none;">
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              id="agreeToSend"
+              name="agreeToSend"
+              required
+            />
+            <span>I agree to send this email to my MP</span>
+          </label>
+        </div>
+
+        <div class="email-preview">
+          <h4>Email Preview</h4>
+          <div class="preview-header">
+            <p>
+              <strong>To:</strong>
+              <span id="previewToName"></span> (<span id="previewToEmail"
+              ></span>)
+            </p>
+            <p><strong>Subject:</strong> {campaign.emailSubject}</p>
+          </div>
+          <div class="preview-body" id="previewBody"></div>
+          <p class="preview-note">
+            <strong>Note:</strong> You will receive a copy of this email. Click the
+            link in the confirmation email we send you to complete this action.
+          </p>
+        </div>
       </div>
 
       <div id="error" class="error" style="display: none;"></div>
       <div id="success" class="success" style="display: none;"></div>
 
-      <button type="submit" id="submitBtn">
-        Find My MP and Continue
-      </button>
+      <div class="form-actions">
+        <button type="submit" id="submitBtn" disabled> Send to Your MP </button>
+        <button type="button" id="resetBtn" class="btn-secondary">
+          Reset Form
+        </button>
+      </div>
     </form>
   </div>
 
@@ -77,77 +139,607 @@ const campaign = getCampaign();
       margin-top: 5px;
       color: #505a5f;
     }
+
+    .input-with-validation {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-with-validation input {
+      flex: 1;
+      padding-right: 45px;
+    }
+
+    .validation-icon {
+      position: absolute;
+      right: 12px;
+      font-size: 1.5rem;
+      display: none;
+    }
+
+    .validation-icon.valid {
+      display: block;
+      color: var(--success-color);
+    }
+
+    .validation-icon.valid::before {
+      content: "✓";
+    }
+
+    .validation-icon.invalid {
+      display: block;
+      color: var(--error-color);
+    }
+
+    .validation-icon.invalid::before {
+      content: "✗";
+    }
+
+    .validation-icon.loading {
+      display: block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(29, 112, 184, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    .validation-icon.loading::before {
+      content: "";
+    }
+
+    .field-error {
+      color: var(--error-color);
+      font-size: 0.9rem;
+      margin-top: 5px;
+      font-weight: 600;
+    }
+
+    .mp-details {
+      margin: 20px 0;
+      padding: 20px;
+      background-color: #f3f2f1;
+      border-left: 4px solid var(--primary-color);
+      border-radius: 4px;
+    }
+
+    .mp-details h4 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+      color: var(--text-color);
+    }
+
+    .mp-card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .mp-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mp-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin: 0;
+    }
+
+    .mp-meta {
+      font-size: 1rem;
+      color: #505a5f;
+      margin: 0;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .form-actions button {
+      flex: 1;
+    }
+
+    .btn-secondary {
+      background-color: #f3f2f1;
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: #e1dfdd;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      margin-top: 4px;
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .checkbox-label span {
+      flex: 1;
+    }
+
+    .email-preview {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: white;
+      border: 2px solid var(--border-color);
+      border-radius: 4px;
+    }
+
+    .email-preview h4 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+      color: var(--text-color);
+    }
+
+    .preview-header {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .preview-header p {
+      margin: 5px 0;
+      font-size: 0.95rem;
+      color: #505a5f;
+    }
+
+    .preview-body {
+      background-color: #fafafa;
+      padding: 20px;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+      margin-bottom: 15px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      font-family: Arial, sans-serif;
+    }
+
+    .preview-note {
+      font-size: 0.9rem;
+      color: #505a5f;
+      margin: 10px 0 0 0;
+      padding: 10px;
+      background-color: #fff4e6;
+      border-radius: 4px;
+      border-left: 4px solid #ffa500;
+    }
+
+    .preview-note strong {
+      font-weight: 600;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 
   <script>
-    const form = document.getElementById('campaignForm') as HTMLFormElement;
-    const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
-    const errorDiv = document.getElementById('error') as HTMLDivElement;
-    const successDiv = document.getElementById('success') as HTMLDivElement;
+    const form = document.getElementById("campaignForm") as HTMLFormElement;
+    const submitBtn = document.getElementById("submitBtn") as HTMLButtonElement;
+    const resetBtn = document.getElementById("resetBtn") as HTMLButtonElement;
+    const errorDiv = document.getElementById("error") as HTMLDivElement;
+    const successDiv = document.getElementById("success") as HTMLDivElement;
+    const nameInput = document.getElementById("name") as HTMLInputElement;
+    const nameStatus = document.getElementById("nameStatus") as HTMLSpanElement;
+    const nameError = document.getElementById("nameError") as HTMLDivElement;
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const emailStatus = document.getElementById(
+      "emailStatus"
+    ) as HTMLSpanElement;
+    const emailError = document.getElementById("emailError") as HTMLDivElement;
+    const postcodeInput = document.getElementById(
+      "postcode"
+    ) as HTMLInputElement;
+    const postcodeStatus = document.getElementById(
+      "postcodeStatus"
+    ) as HTMLSpanElement;
+    const postcodeError = document.getElementById(
+      "postcodeError"
+    ) as HTMLDivElement;
+    const mpDetails = document.getElementById("mpDetails") as HTMLDivElement;
+    const mpName = document.getElementById("mpName") as HTMLParagraphElement;
+    const mpConstituency = document.getElementById(
+      "mpConstituency"
+    ) as HTMLSpanElement;
+    const mpParty = document.getElementById("mpParty") as HTMLSpanElement;
+    const emailPreviewSection = document.getElementById(
+      "emailPreviewSection"
+    ) as HTMLDivElement;
+    const agreeToSendCheckbox = document.getElementById(
+      "agreeToSend"
+    ) as HTMLInputElement;
+    const previewToName = document.getElementById(
+      "previewToName"
+    ) as HTMLSpanElement;
+    const previewToEmail = document.getElementById(
+      "previewToEmail"
+    ) as HTMLSpanElement;
+    const previewBody = document.getElementById(
+      "previewBody"
+    ) as HTMLDivElement;
 
-    form.addEventListener('submit', async (e) => {
+    let currentMP: any = null;
+    let postcodeVerified = false;
+    let nameValid = false;
+    let emailValid = false;
+    let debounceTimer: number | null = null;
+
+    // Campaign configuration (passed from server)
+    const campaignDescription = `{campaign.description}`;
+
+    // Import centralized validation functions
+    // These are the SAME functions used by the server-side Netlify functions
+    import {
+      validateName,
+      validateEmail,
+      validatePostcode,
+      formatPostcode,
+    } from "../lib/validation";
+
+    // Fetch email preview from API (uses the same template as actual sending)
+    async function fetchEmailPreview(
+      name: string,
+      email: string,
+      postcode: string,
+      mp: any
+    ): Promise<string> {
+      try {
+        const response = await fetch("/api/preview-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, postcode, mp }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch email preview");
+        }
+
+        const data = await response.json();
+        return data.preview.text;
+      } catch (error) {
+        console.error("Error fetching email preview:", error);
+        // Fallback to a basic preview if API fails
+        return `Dear ${mp.name},\n\nI am writing to you as your constituent in ${mp.constituency} (${postcode}).\n\n${campaignDescription}\n\nI urge you to take action on this important matter.\n\nYours sincerely,\n${name}`;
+      }
+    }
+
+    // Verify postcode and find MP
+    async function verifyAndFindMP(postcode: string) {
+      // Clear previous state
+      postcodeStatus.className = "validation-icon loading";
+      postcodeError.style.display = "none";
+      mpDetails.style.display = "none";
+      emailPreviewSection.style.display = "none";
+      agreeToSendCheckbox.checked = false;
+      currentMP = null;
+      postcodeVerified = false;
+      submitBtn.disabled = true;
+
+      try {
+        // First verify postcode format (client-side) using centralized validation
+        const validation = validatePostcode(postcode);
+
+        if (!validation.valid) {
+          postcodeStatus.className = "validation-icon invalid";
+          postcodeError.textContent =
+            validation.error || "Invalid postcode format";
+          postcodeError.style.display = "block";
+          return;
+        }
+
+        // Postcode is valid, now find MP
+        const mpResponse = await fetch("/api/find-mp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ postcode }),
+        });
+
+        if (!mpResponse.ok) {
+          const error = await mpResponse.json();
+          postcodeStatus.className = "validation-icon invalid";
+          postcodeError.textContent = error.error || "Could not find your MP";
+          postcodeError.style.display = "block";
+          return;
+        }
+
+        const { mp } = await mpResponse.json();
+
+        // Success! Show verified postcode and MP details
+        postcodeStatus.className = "validation-icon valid";
+        postcodeVerified = true;
+        currentMP = mp;
+
+        // Display MP details
+        mpName.textContent = mp.name;
+        mpConstituency.textContent = mp.constituency;
+        mpParty.textContent = mp.party;
+        mpDetails.style.display = "block";
+
+        // Show email preview section
+        const userName =
+          (document.getElementById("name") as HTMLInputElement)?.value ||
+          "Your Name";
+        const userEmail =
+          (document.getElementById("email") as HTMLInputElement)?.value ||
+          "your.email@example.com";
+
+        previewToName.textContent = mp.name;
+        previewToEmail.textContent = mp.email;
+
+        // Fetch email preview from API
+        previewBody.textContent = "Loading preview...";
+        emailPreviewSection.style.display = "block";
+
+        const preview = await fetchEmailPreview(
+          userName,
+          userEmail,
+          postcode,
+          mp
+        );
+        previewBody.textContent = preview;
+
+        // Reset checkbox
+        agreeToSendCheckbox.checked = false;
+        submitBtn.disabled = true;
+      } catch (error) {
+        console.error("Error verifying postcode:", error);
+        postcodeStatus.className = "validation-icon invalid";
+        postcodeError.textContent = "An error occurred. Please try again.";
+        postcodeError.style.display = "block";
+      }
+    }
+
+    // Reset form handler
+    function resetForm() {
+      // Reset form fields
+      form.reset();
+
+      // Clear name validation state
+      nameStatus.className = "validation-icon";
+      nameError.style.display = "none";
+      nameValid = false;
+
+      // Clear email validation state
+      emailStatus.className = "validation-icon";
+      emailError.style.display = "none";
+      emailValid = false;
+
+      // Clear postcode validation state
+      postcodeStatus.className = "validation-icon";
+      postcodeError.style.display = "none";
+
+      // Hide MP details
+      mpDetails.style.display = "none";
+
+      // Hide email preview section
+      emailPreviewSection.style.display = "none";
+      agreeToSendCheckbox.checked = false;
+
+      // Hide messages
+      errorDiv.style.display = "none";
+      successDiv.style.display = "none";
+
+      // Clear state variables
+      currentMP = null;
+      postcodeVerified = false;
+
+      // Clear any pending debounce timer
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+        debounceTimer = null;
+      }
+
+      // Disable submit button
+      submitBtn.disabled = true;
+    }
+
+    // Reset button click handler
+    resetBtn.addEventListener("click", resetForm);
+
+    // Name validation on input
+    nameInput.addEventListener("input", () => {
+      const name = nameInput.value;
+      const validation = validateName(name);
+
+      if (name.trim().length === 0) {
+        // Empty - no validation icon
+        nameStatus.className = "validation-icon";
+        nameError.style.display = "none";
+        nameValid = false;
+      } else if (validation.valid) {
+        // Valid
+        nameStatus.className = "validation-icon valid";
+        nameError.style.display = "none";
+        nameValid = true;
+      } else {
+        // Invalid
+        nameStatus.className = "validation-icon invalid";
+        nameError.textContent = validation.error || "";
+        nameError.style.display = "block";
+        nameValid = false;
+      }
+
+      updateSubmitButton();
+    });
+
+    // Email validation on input
+    emailInput.addEventListener("input", () => {
+      const email = emailInput.value;
+      const validation = validateEmail(email);
+
+      if (email.trim().length === 0) {
+        // Empty - no validation icon
+        emailStatus.className = "validation-icon";
+        emailError.style.display = "none";
+        emailValid = false;
+      } else if (validation.valid) {
+        // Valid
+        emailStatus.className = "validation-icon valid";
+        emailError.style.display = "none";
+        emailValid = true;
+      } else {
+        // Invalid
+        emailStatus.className = "validation-icon invalid";
+        emailError.textContent = validation.error || "";
+        emailError.style.display = "block";
+        emailValid = false;
+      }
+
+      updateSubmitButton();
+    });
+
+    // Update submit button state based on all validations
+    function updateSubmitButton() {
+      if (
+        agreeToSendCheckbox.checked &&
+        postcodeVerified &&
+        currentMP &&
+        nameValid &&
+        emailValid
+      ) {
+        submitBtn.disabled = false;
+      } else {
+        submitBtn.disabled = true;
+      }
+    }
+
+    // Checkbox handler - enable submit button when checked
+    agreeToSendCheckbox.addEventListener("change", () => {
+      updateSubmitButton();
+    });
+
+    // Debounced postcode validation
+    postcodeInput.addEventListener("input", () => {
+      const postcode = postcodeInput.value.trim();
+
+      // Clear previous timer
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+
+      // Reset if empty
+      if (postcode.length === 0) {
+        postcodeStatus.className = "validation-icon";
+        postcodeError.style.display = "none";
+        mpDetails.style.display = "none";
+        emailPreviewSection.style.display = "none";
+        agreeToSendCheckbox.checked = false;
+        submitBtn.disabled = true;
+        return;
+      }
+
+      // Wait for user to stop typing (500ms)
+      debounceTimer = window.setTimeout(() => {
+        if (postcode.length >= 5) {
+          // Minimum UK postcode length
+          verifyAndFindMP(postcode);
+        }
+      }, 500);
+    });
+
+    // Handle form submission
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      
+
+      if (!nameValid) {
+        errorDiv.textContent = "Please enter a valid name.";
+        errorDiv.style.display = "block";
+        return;
+      }
+
+      if (!emailValid) {
+        errorDiv.textContent = "Please enter a valid email address.";
+        errorDiv.style.display = "block";
+        return;
+      }
+
+      if (!postcodeVerified || !currentMP) {
+        errorDiv.textContent = "Please enter a valid UK postcode first.";
+        errorDiv.style.display = "block";
+        return;
+      }
+
       // Hide previous messages
-      errorDiv.style.display = 'none';
-      successDiv.style.display = 'none';
-      
+      errorDiv.style.display = "none";
+      successDiv.style.display = "none";
+
       // Disable button and show loading
       submitBtn.disabled = true;
       const originalText = submitBtn.textContent;
-      submitBtn.innerHTML = '<span class="loading"></span>Finding your MP...';
-      
+      submitBtn.innerHTML =
+        '<span class="loading"></span>Sending confirmation email...';
+
       try {
         const formData = new FormData(form);
         const data = {
-          name: formData.get('name') as string,
-          email: formData.get('email') as string,
-          postcode: formData.get('postcode') as string,
-          address: formData.get('address') as string,
+          name: formData.get("name") as string,
+          email: formData.get("email") as string,
+          postcode: formData.get("postcode") as string,
         };
-        
-        // Find MP
-        const mpResponse = await fetch('/api/find-mp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ postcode: data.postcode }),
+
+        // Send magic link with MP details
+        const magicLinkResponse = await fetch("/api/send-magic-link", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...data, mp: currentMP }),
         });
-        
-        if (!mpResponse.ok) {
-          const error = await mpResponse.json();
-          throw new Error(error.error || 'Failed to find MP');
-        }
-        
-        const { mp } = await mpResponse.json();
-        
-        // Send magic link
-        submitBtn.textContent = 'Sending confirmation email...';
-        
-        const magicLinkResponse = await fetch('/api/send-magic-link', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...data, mp }),
-        });
-        
+
         if (!magicLinkResponse.ok) {
           const error = await magicLinkResponse.json();
-          throw new Error(error.error || 'Failed to send confirmation email');
+          throw new Error(error.error || "Failed to send confirmation email");
         }
-        
+
         // Show success message
         successDiv.textContent = `Success! We've sent a confirmation email to ${data.email}. Please check your inbox and click the link to complete your action.`;
-        successDiv.style.display = 'block';
-        
+        successDiv.style.display = "block";
+
         // Reset form
         form.reset();
-        submitBtn.textContent = originalText || 'Find My MP and Continue';
-        submitBtn.disabled = false;
-        
+        nameStatus.className = "validation-icon";
+        nameValid = false;
+        emailStatus.className = "validation-icon";
+        emailValid = false;
+        postcodeStatus.className = "validation-icon";
+        mpDetails.style.display = "none";
+        emailPreviewSection.style.display = "none";
+        agreeToSendCheckbox.checked = false;
+        currentMP = null;
+        postcodeVerified = false;
+        submitBtn.textContent = originalText || "Send to Your MP";
+        submitBtn.disabled = true;
       } catch (error) {
-        errorDiv.textContent = error instanceof Error ? error.message : 'An error occurred. Please try again.';
-        errorDiv.style.display = 'block';
-        submitBtn.textContent = originalText || 'Find My MP and Continue';
-        submitBtn.disabled = false;
+        errorDiv.textContent =
+          error instanceof Error
+            ? error.message
+            : "An error occurred. Please try again.";
+        errorDiv.style.display = "block";
+        submitBtn.textContent = originalText || "Send to Your MP";
+        submitBtn.disabled = postcodeVerified ? false : true;
       }
     });
   </script>

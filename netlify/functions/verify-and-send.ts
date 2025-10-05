@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { createEmailService } from '../../src/lib/email/factory';
 import { getCampaign } from '../../src/lib/utils';
 import type { MagicLinkPayload } from '../../src/lib/types';
+import { generateMPEmailText, generateMPEmailHtml } from '../../src/lib/email/templates';
 
 /**
  * Netlify Function: Verify magic link and send email to MP
@@ -44,49 +45,29 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
         // Load campaign configuration
         const campaign = getCampaign();
 
-        // Prepare email to MP
+        // Prepare email to MP using shared template generator
         const emailService = createEmailService();
 
-        const emailText = `Dear ${payload.mpName},
+        // Use emailBody if provided, otherwise fall back to description
+        const campaignContent = campaign.emailBody || campaign.description;
 
-I am writing to you as your constituent from ${payload.address}, ${payload.postcode}.
+        const emailText = generateMPEmailText({
+            mpName: payload.mpName,
+            constituency: payload.constituency,
+            postcode: payload.postcode,
+            campaignDescription: campaignContent,
+            userName: payload.name,
+            userEmail: payload.email,
+        });
 
-${campaign.description}
-
-I urge you to take action on this important matter.
-
-Yours sincerely,
-${payload.name}
-
----
-This email was sent via an automated campaign platform.
-Constituent details: ${payload.email}`;
-
-        const emailHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <p>Dear ${payload.mpName},</p>
-  
-  <p>I am writing to you as your constituent from <strong>${payload.address}, ${payload.postcode}</strong>.</p>
-  
-  <p>${campaign.description}</p>
-  
-  <p>I urge you to take action on this important matter.</p>
-  
-  <p>Yours sincerely,<br><strong>${payload.name}</strong></p>
-  
-  <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
-  <p style="font-size: 12px; color: #666;">
-    This email was sent via an automated campaign platform.<br>
-    Constituent details: ${payload.email}
-  </p>
-</body>
-</html>`;
+        const emailHtml = generateMPEmailHtml({
+            mpName: payload.mpName,
+            constituency: payload.constituency,
+            postcode: payload.postcode,
+            campaignDescription: campaignContent,
+            userName: payload.name,
+            userEmail: payload.email,
+        });
 
         // Build recipient list with CC and BCC
         const ccList = [...campaign.cc, payload.email]; // Always CC the user

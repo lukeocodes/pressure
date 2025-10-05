@@ -2,11 +2,13 @@ import type { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
 import jwt from 'jsonwebtoken';
 import { createEmailService } from '../../src/lib/email/factory';
 import type { MagicLinkPayload } from '../../src/lib/types';
+import { formatPostcode } from '../../src/lib/api/postcode';
+import { validateUserSubmission } from '../../src/lib/validation';
 
 /**
  * Netlify Function: Send magic link email
  * POST /api/send-magic-link
- * Body: { name, email, postcode, address, mp: { name, email, constituency, party } }
+ * Body: { name, email, postcode, mp: { name, email, constituency, party } }
  */
 export const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
     // Only allow POST
@@ -18,13 +20,14 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
     }
 
     try {
-        const { name, email, postcode, address, mp } = JSON.parse(event.body || '{}');
+        const { name, email, postcode, mp } = JSON.parse(event.body || '{}');
 
-        // Validate inputs
-        if (!name || !email || !postcode || !address || !mp) {
+        // Validate inputs using centralized validation
+        const validation = validateUserSubmission({ name, email, postcode, mp });
+        if (!validation.valid) {
             return {
                 statusCode: 400,
-                body: JSON.stringify({ error: 'Missing required fields' }),
+                body: JSON.stringify({ error: validation.error }),
             };
         }
 
@@ -32,11 +35,13 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
         const jwtSecret = process.env.JWT_SECRET || 'dev-secret-change-in-production';
         const baseUrl = process.env.BASE_URL || process.env.URL || 'http://localhost:8888';
 
+        // Format postcode for consistent display (e.g., "SW1A1AA" -> "SW1A 1AA")
+        const formattedPostcode = formatPostcode(postcode);
+
         const payload: Omit<MagicLinkPayload, 'iat' | 'exp'> = {
             email,
             name,
-            postcode,
-            address,
+            postcode: formattedPostcode,
             mpEmail: mp.email,
             mpName: mp.name,
             constituency: mp.constituency,

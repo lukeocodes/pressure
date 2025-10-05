@@ -4,8 +4,21 @@ import type { HandlerEvent, HandlerContext } from '@netlify/functions';
  * Create a mock Netlify function event
  */
 export function createMockEvent(
-    overrides: Partial<HandlerEvent> = {}
+    httpMethodOrOverrides: string | Partial<HandlerEvent> = 'POST',
+    body?: any
 ): HandlerEvent {
+    // Support both old and new signatures
+    let overrides: Partial<HandlerEvent>;
+    
+    if (typeof httpMethodOrOverrides === 'string') {
+        overrides = {
+            httpMethod: httpMethodOrOverrides,
+            body: body ? JSON.stringify(body) : null,
+        };
+    } else {
+        overrides = httpMethodOrOverrides;
+    }
+    
     return {
         rawUrl: 'http://localhost:8888/.netlify/functions/test',
         rawQuery: '',
