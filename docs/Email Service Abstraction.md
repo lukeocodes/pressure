@@ -2,7 +2,7 @@
 
 ## Overview
 
-The email service abstraction layer allows the platform to support multiple email providers without changing application code. This makes it easy to switch providers or support different providers in different environments.
+The email service abstraction layer supports multiple email providers without changing application code.
 
 ## Supported Providers
 
@@ -52,16 +52,11 @@ interface EmailResult {
 
 ## Provider Implementation
 
-Each provider adapter transforms the generic interface into provider-specific API calls. This ensures:
-
-- Consistent error handling
-- Uniform logging
-- Easy testing and mocking
-- Simple provider switching
+Each provider adapter implements the `EmailService` interface, ensuring consistent error handling and easy provider switching.
 
 ## Development Mode
 
-In development, the platform uses the console provider by default, which logs emails instead of sending them. This allows testing without API keys or email credits.
+The console provider logs emails instead of sending them, allowing testing without API keys.
 
 ## Adding New Providers
 

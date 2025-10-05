@@ -6,11 +6,11 @@ Client-side UK postcode validation using a comprehensive regex pattern. No exter
 
 ## Why Client-Side?
 
-1. **Instant validation** - No network latency
-2. **Offline support** - Works without internet
-3. **Privacy** - Postcode not sent externally until MP lookup
-4. **No rate limits** - Unlimited validations
-5. **Simplified architecture** - One less API dependency
+- Instant validation (no network latency)
+- Offline support
+- Privacy (postcode not sent externally until MP lookup)
+- No rate limits
+- Simplified architecture
 
 ## Functions
 

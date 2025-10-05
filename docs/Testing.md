@@ -153,91 +153,18 @@ coverage/index.html
 
 ### Do's
 
-✅ **Test behavior, not implementation**
-
-```typescript
-// Good: Tests what the function does
-expect(isValidPostcode("SW1A 1AA")).toBe(true);
-
-// Bad: Tests internal implementation details
-expect(postcodeRegex.test("SW1A 1AA")).toBe(true);
-```
-
-✅ **Use descriptive test names**
-
-```typescript
-it("should return 404 when MP not found for postcode", async () => {
-  // Test code
-});
-```
-
-✅ **Test edge cases and error conditions**
-
-```typescript
-it("should handle network errors gracefully", async () => {
-  mockFetch.mockRejectedValueOnce(new Error("Network error"));
-  const result = await findMPByPostcode("SW1A 1AA");
-  expect(result).toBeNull();
-});
-```
-
-✅ **Keep tests independent**
-
-```typescript
-beforeEach(() => {
-  vi.clearAllMocks();
-  // Reset any shared state
-});
-```
-
-✅ **Mock external dependencies**
-
-```typescript
-// Mock external APIs, don't make real HTTP requests
-global.fetch = vi.fn().mockResolvedValue(mockResponse);
-```
+✅ Test behavior, not implementation  
+✅ Use descriptive test names  
+✅ Test edge cases and error conditions  
+✅ Keep tests independent  
+✅ Mock external dependencies
 
 ### Don'ts
 
-❌ **Don't test third-party code**
-
-```typescript
-// Don't test that Astro works correctly
-// Don't test that jsonwebtoken signs tokens
-// Test YOUR code that uses these libraries
-```
-
-❌ **Don't make real API calls**
-
-```typescript
-// Bad: Makes real HTTP requests
-const result = await fetch("https://api.parliament.uk/...");
-
-// Good: Mock the fetch call
-global.fetch = vi.fn().mockResolvedValue(mockResponse);
-```
-
-❌ **Don't share state between tests**
-
-```typescript
-// Bad: Tests depend on execution order
-let sharedVariable = "test";
-
-// Good: Each test is independent
-beforeEach(() => {
-  const localVariable = "test";
-});
-```
-
-❌ **Don't write flaky tests**
-
-```typescript
-// Bad: Time-dependent test
-expect(Date.now()).toBe(specificTimestamp);
-
-// Good: Mock time or use relative checks
-vi.useFakeTimers();
-```
+❌ Don't test third-party code  
+❌ Don't make real API calls  
+❌ Don't share state between tests  
+❌ Don't write flaky tests
 
 ## Continuous Integration
 

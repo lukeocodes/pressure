@@ -17,7 +17,6 @@ Runs Astro dev server on `http://localhost:4321` with Netlify Functions.
 **Requirements:**
 
 - UK Parliament API (public, no auth needed)
-- Postcodes.io API (public, no auth needed)
 - Email provider configured (or use `console` mode)
 
 ### Mock Development (No External APIs)
@@ -194,7 +193,6 @@ pnpm dev
    - Name: Your test name
    - Email: Any email address
    - Postcode: Use `WC1E 6BT` for Keir Starmer (mock mode)
-   - Address: Any address
 3. Click "Find My MP and Continue"
 4. Check console for mock email
 5. Copy magic link from console

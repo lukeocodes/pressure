@@ -4,12 +4,10 @@ Welcome to Pressure! This guide will help you get your pressure campaign up and 
 
 ## Prerequisites
 
-Before you begin, ensure you have:
-
-- **Node.js 18+** installed
-- **pnpm** package manager
-- A **Netlify account** (for deployment)
-- An **email service** account (SendGrid, Mailgun, or use console mode for dev)
+- Node.js 18+
+- pnpm package manager
+- Netlify account (for deployment)
+- Email service account (SendGrid, Mailgun, or use console mode for dev)
 
 ## Quick Start (5 minutes)
 
@@ -43,11 +41,7 @@ Copy the example environment file:
 cp .env.example .env
 ```
 
-For local development, the defaults work fine. In production, you'll need to configure:
-
-- Email provider credentials
-- JWT secret
-- Base URL (auto-configured on Netlify)
+For local development, defaults work fine. Production requires email provider credentials and JWT secret.
 
 ### 4. Start Development Server
 

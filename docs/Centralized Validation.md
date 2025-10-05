@@ -4,39 +4,20 @@ This document describes the centralized validation system that ensures consisten
 
 ## Overview
 
-All validation logic is centralized in a single module (`src/lib/validation.ts`) that is used by:
+All validation logic is centralized in `src/lib/validation.ts` and shared across:
 
-1. **Client-side code** - Frontend forms in `src/pages/index.astro`
-2. **Server-side code** - Netlify functions for API validation
-3. **Tests** - Comprehensive test coverage for all validation rules
+1. Client-side code (frontend forms)
+2. Server-side code (Netlify functions)
+3. Tests
 
-This approach ensures that validation rules are defined once and applied consistently everywhere, preventing drift between frontend and backend validation.
+This ensures validation rules are defined once and applied consistently everywhere.
 
 ## Benefits
 
-### Single Source of Truth
-
-- Validation rules are defined in one place
-- Changes to validation automatically apply everywhere
-- No risk of frontend and backend validation diverging
-
-### Type Safety
-
-- TypeScript ensures consistent data structures
-- Validation functions have well-defined interfaces
-- IDE autocomplete and type checking for all validation
-
-### Testability
-
-- Centralized tests cover all validation scenarios
-- Easy to add new validation rules with confidence
-- Test once, validate everywhere
-
-### Maintainability
-
-- Easy to find and update validation logic
-- Clear documentation of validation rules
-- Consistent error messages across the application
+- **Single Source of Truth** - Rules defined once, applied everywhere
+- **Type Safety** - TypeScript ensures consistency
+- **Testability** - Test once, validate everywhere
+- **Maintainability** - Easy to find and update validation logic
 
 ## Architecture
 

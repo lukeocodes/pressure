@@ -77,15 +77,15 @@ app.post('/api/find-mp', (req, res) => {
 app.post('/api/send-magic-link', (req, res) => {
     console.log('📧 Mock: Sending magic link to:', req.body.email);
 
-    const { name, email, postcode, address, mp } = req.body;
+    const { name, email, postcode, mp } = req.body;
 
-    if (!name || !email || !postcode || !address || !mp) {
+    if (!name || !email || !postcode || !mp) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Generate a mock token
     const mockToken = Buffer.from(
-        JSON.stringify({ email, name, postcode, address, mp, exp: Date.now() + 3600000 })
+        JSON.stringify({ email, name, postcode, mp, exp: Date.now() + 3600000 })
     ).toString('base64');
 
     const magicLink = `http://localhost:8888/verify?token=${mockToken}`;
@@ -134,7 +134,7 @@ app.post('/api/verify-and-send', (req, res) => {
         console.log('');
         console.log(`Dear ${payload.mp.mpName || payload.mp.name},`);
         console.log('');
-        console.log(`I am writing as your constituent from ${payload.address}, ${payload.postcode}.`);
+        console.log(`I am writing as your constituent in ${payload.mp.constituency} (${payload.postcode}).`);
         console.log('');
         console.log('[Campaign message would appear here]');
         console.log('');

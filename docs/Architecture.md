@@ -20,26 +20,9 @@ Pressure is an open-source platform for running UK government pressure campaigns
 
 ## Architecture Decisions
 
-### Why Astro?
-
-- Optimized for content-heavy sites
-- Minimal JavaScript by default
-- SSR and SSG capabilities
-- Easy to deploy on Netlify
-
-### Why Serverless Functions?
-
-- No infrastructure management
-- Cost-effective for variable traffic
-- Native Netlify integration
-- Easy to scale
-
-### Why Email Abstraction Layer?
-
-- Swap email providers without code changes
-- Support multiple providers (SendGrid, Mailgun, AWS SES, etc.)
-- Environment-based configuration
-- Easier testing and development
+**Astro** - Optimized for content-heavy sites with minimal JavaScript  
+**Serverless Functions** - No infrastructure management, cost-effective scaling  
+**Email Abstraction** - Swap providers without code changes
 
 ## Data Flow
 

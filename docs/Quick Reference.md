@@ -136,7 +136,7 @@ pressure/
 - [Architecture](Architecture.md) - System design
 - [Campaign Configuration](Campaign%20Configuration.md) - Campaign setup
 - [Email Service Abstraction](Email%20Service%20Abstraction.md) - Email providers
-- [Postcode API Integration](Postcode%20API%20Integration.md) - Postcode lookup service
+- [Postcode Validation Service](Postcode%20Validation%20Service.md) - Postcode validation
 - [Testing](Testing.md) - Testing guide
 - [Data Sources and Licensing](Data%20Sources%20And%20Licensing.md) - API licensing
 - [Getting Started](Getting%20Started.md) - Complete setup guide
@@ -181,7 +181,6 @@ pnpm dev:mock
 
 - [GitHub Repository](https://github.com/lukeocodes/pressure)
 - [UK Parliament API](https://members-api.parliament.uk/)
-- [Postcodes.io](https://postcodes.io/)
 - [Astro Docs](https://docs.astro.build/)
 - [Netlify Functions](https://docs.netlify.com/functions/overview/)
 

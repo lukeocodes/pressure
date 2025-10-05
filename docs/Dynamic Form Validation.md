@@ -306,6 +306,7 @@ This pattern validates:
    - User Action: Contact support or verify postcode
 
 6. **API Timeout**
+
    - Message: "An error occurred. Please try again."
    - User Action: Retry after a moment
 
@@ -349,7 +350,7 @@ Tests have been updated to reflect the removal of the address field:
 
 ## Related Documentation
 
-- [Postcode API Integration](./Postcode%20API%20Integration.md)
+- [Postcode Validation Service](./Postcode%20Validation%20Service.md)
 - [Campaign Configuration](./Campaign%20Configuration.md)
 - [Email Templates](./Email%20Templates.md)
 - [Testing](./Testing.md)

@@ -11,12 +11,7 @@ The platform sends two types of emails:
 
 ## Email Template Implementation
 
-Email templates are generated inline in the Netlify functions rather than using separate template files. This approach provides:
-
-- **Simplicity** - No template engine required
-- **Type Safety** - Templates benefit from TypeScript checking
-- **Performance** - No file I/O or template parsing
-- **Maintainability** - Email logic stays close to send logic
+Email templates are generated inline in the Netlify functions, providing simplicity, type safety, and performance without requiring a separate template engine.
 
 ### Available Data
 
