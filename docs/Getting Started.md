@@ -134,16 +134,21 @@ Add these in: Site Settings → Environment Variables
 
 ```
 EMAIL_PROVIDER=sendgrid
-EMAIL_API_KEY=your_sendgrid_api_key
+EMAIL_SENDGRID_API_KEY=your_sendgrid_api_key
 EMAIL_FROM=noreply@yourdomain.com
 EMAIL_FROM_NAME=Your Campaign Name
 JWT_SECRET=generate_a_long_random_string_here
 ```
 
-**Optional:**
+**Or for Mailgun:**
 
 ```
-MAILGUN_DOMAIN=mg.yourdomain.com  # If using Mailgun
+EMAIL_PROVIDER=mailgun
+EMAIL_MAILGUN_API_KEY=your_mailgun_api_key
+EMAIL_MAILGUN_DOMAIN=mg.yourdomain.com
+EMAIL_FROM=noreply@yourdomain.com
+EMAIL_FROM_NAME=Your Campaign Name
+JWT_SECRET=generate_a_long_random_string_here
 ```
 
 The `BASE_URL` is automatically set by Netlify.
@@ -211,7 +216,7 @@ EMAIL_PROVIDER=console
 
 ```env
 EMAIL_PROVIDER=sendgrid
-EMAIL_API_KEY=your_sendgrid_api_key
+EMAIL_SENDGRID_API_KEY=your_sendgrid_api_key
 EMAIL_FROM=verified@yourdomain.com
 ```
 
@@ -223,8 +228,8 @@ EMAIL_FROM=verified@yourdomain.com
 
 ```env
 EMAIL_PROVIDER=mailgun
-EMAIL_API_KEY=your_mailgun_api_key
-MAILGUN_DOMAIN=mg.yourdomain.com
+EMAIL_MAILGUN_API_KEY=your_mailgun_api_key
+EMAIL_MAILGUN_DOMAIN=mg.yourdomain.com
 EMAIL_FROM=noreply@yourdomain.com
 ```
 

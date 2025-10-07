@@ -117,17 +117,22 @@ Edit `src/campaigns/config.json` to customize your campaign:
 
 Configure these in Netlify or your `.env` file:
 
-| Variable          | Description                                               | Required | Default             |
-| ----------------- | --------------------------------------------------------- | -------- | ------------------- |
-| `EMAIL_PROVIDER`  | Email service provider (`console`, `sendgrid`, `mailgun`) | No       | `console`           |
-| `EMAIL_API_KEY`   | API key for email provider                                | Yes\*    | -                   |
-| `EMAIL_FROM`      | Sender email address                                      | Yes      | -                   |
-| `EMAIL_FROM_NAME` | Sender name                                               | No       | `Pressure Campaign` |
-| `JWT_SECRET`      | Secret for magic link tokens                              | Yes      | -                   |
-| `BASE_URL`        | Base URL for magic links                                  | Yes\*\*  | -                   |
-| `MAILGUN_DOMAIN`  | Mailgun domain (if using Mailgun)                         | Yes\*    | -                   |
+| Variable                                 | Description                        | Required | Default             |
+| ---------------------------------------- | ---------------------------------- | -------- | ------------------- |
+| `EMAIL_PROVIDER`                         | Email provider (see options below) | No       | `console`           |
+| `EMAIL_FROM`                             | Sender email address               | Yes      | -                   |
+| `EMAIL_FROM_NAME`                        | Sender name                        | No       | `Pressure Campaign` |
+| `EMAIL_SENDGRID_API_KEY`                 | SendGrid API key                   | Yes\*    | -                   |
+| `EMAIL_MAILGUN_API_KEY`                  | Mailgun API key                    | Yes\*    | -                   |
+| `EMAIL_MAILGUN_DOMAIN`                   | Mailgun domain                     | Yes\*    | -                   |
+| `EMAIL_NETLIFY_BLOBS_STORE_NAME`         | Netlify Blobs store name           | No       | `email-queue`       |
+| `EMAIL_NETLIFY_BLOBS_PROCESSOR_PROVIDER` | Provider for processing queue      | Yes\*    | -                   |
+| `EMAIL_NETLIFY_BLOBS_MAX_ATTEMPTS`       | Max retry attempts                 | No       | `3`                 |
+| `EMAIL_NETLIFY_BLOBS_BATCH_SIZE`         | Emails per batch                   | No       | `10`                |
+| `JWT_SECRET`                             | Secret for magic link tokens       | Yes      | -                   |
+| `BASE_URL`                               | Base URL for magic links           | Yes\*\*  | -                   |
 
-\* Required for production email providers  
+\* Required for specific email providers  
 \*\* Auto-detected on Netlify
 
 ### Email Providers
@@ -135,8 +140,9 @@ Configure these in Netlify or your `.env` file:
 The platform supports multiple email providers. Configure via `EMAIL_PROVIDER`:
 
 - **console** (default) - Logs emails to console (development only)
-- **sendgrid** - SendGrid API (requires `EMAIL_API_KEY`)
-- **mailgun** - Mailgun API (requires `EMAIL_API_KEY` and `MAILGUN_DOMAIN`)
+- **sendgrid** - SendGrid API (requires `EMAIL_SENDGRID_API_KEY`)
+- **mailgun** - Mailgun API (requires `EMAIL_MAILGUN_API_KEY` and `EMAIL_MAILGUN_DOMAIN`)
+- **netlify-blobs** - Queue-based delivery (requires `EMAIL_NETLIFY_BLOBS_PROCESSOR_PROVIDER`)
 
 To add a new provider, see `docs/Email Service Abstraction.md`.
 

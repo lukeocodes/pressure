@@ -134,8 +134,16 @@ BASE_URL=http://localhost:8888
 ### For Real Email (Production-like)
 
 ```env
-EMAIL_PROVIDER=sendgrid  # or mailgun
-EMAIL_API_KEY=your_api_key
+# For SendGrid
+EMAIL_PROVIDER=sendgrid
+EMAIL_SENDGRID_API_KEY=your_api_key
+EMAIL_FROM=noreply@yourdomain.com
+EMAIL_FROM_NAME=Campaign Name
+
+# For Mailgun
+EMAIL_PROVIDER=mailgun
+EMAIL_MAILGUN_API_KEY=your_api_key
+EMAIL_MAILGUN_DOMAIN=mg.yourdomain.com
 EMAIL_FROM=noreply@yourdomain.com
 EMAIL_FROM_NAME=Campaign Name
 ```

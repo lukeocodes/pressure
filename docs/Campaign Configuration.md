@@ -193,8 +193,17 @@ The platform can host multiple campaigns by:
 
 Some sensitive configuration should be set via environment variables:
 
-- `EMAIL_PROVIDER` - Email service provider
-- `EMAIL_API_KEY` - API key for email service
+- `EMAIL_PROVIDER` - Email service provider (console, sendgrid, mailgun, netlify-blobs)
+- `EMAIL_SENDGRID_API_KEY` - SendGrid API key (if using SendGrid)
+- `EMAIL_MAILGUN_API_KEY` - Mailgun API key (if using Mailgun)
+- `EMAIL_MAILGUN_DOMAIN` - Mailgun domain (if using Mailgun)
 - `EMAIL_FROM` - Default sender email address
 - `JWT_SECRET` - Secret for magic link token generation
 - `BASE_URL` - Base URL for magic links
+
+For queue-based delivery with Netlify Blobs:
+
+- `EMAIL_NETLIFY_BLOBS_STORE_NAME` - Blob store name
+- `EMAIL_NETLIFY_BLOBS_PROCESSOR_PROVIDER` - Provider for processing queue
+- `EMAIL_NETLIFY_BLOBS_MAX_ATTEMPTS` - Maximum retry attempts
+- `EMAIL_NETLIFY_BLOBS_BATCH_SIZE` - Batch size for processing

@@ -8,6 +8,7 @@ The email service abstraction layer supports multiple email providers without ch
 
 - **SendGrid** - High-volume transactional email service
 - **Mailgun** - Developer-friendly email API
+- **Netlify Blobs** - Queue-based email delivery for asynchronous processing
 - **AWS SES** - Cost-effective for high volumes
 - **SMTP** - Generic SMTP for any provider
 - **Console** - Development mode (logs to console)
@@ -17,10 +18,23 @@ The email service abstraction layer supports multiple email providers without ch
 Email provider is configured via environment variables:
 
 ```env
+# Choose provider: sendgrid, mailgun, netlify-blobs, or console
 EMAIL_PROVIDER=sendgrid
-EMAIL_API_KEY=your_api_key_here
 EMAIL_FROM=noreply@yourdomain.com
 EMAIL_FROM_NAME=Campaign Name
+
+# SendGrid-specific
+EMAIL_SENDGRID_API_KEY=your_api_key_here
+
+# Mailgun-specific
+EMAIL_MAILGUN_API_KEY=your_api_key_here
+EMAIL_MAILGUN_DOMAIN=mg.yourdomain.com
+
+# Netlify Blobs (queue-based delivery)
+EMAIL_PROVIDER=netlify-blobs
+EMAIL_NETLIFY_BLOBS_STORE_NAME=email-queue  # Optional, default: email-queue
+EMAIL_NETLIFY_BLOBS_PROCESSOR_PROVIDER=sendgrid  # Provider for actual sending
+EMAIL_SENDGRID_API_KEY=your_api_key_here  # For the processor
 ```
 
 ## Interface
@@ -66,3 +80,7 @@ To add a new email provider:
 2. Implement the `EmailService` interface
 3. Register the provider in `src/lib/email/factory.ts`
 4. Update documentation
+
+## Queue-Based Email Delivery
+
+For detailed information about the Netlify Blobs queue-based email provider, including configuration, monitoring, and troubleshooting, see [Netlify Blobs Email Provider](./Netlify%20Blobs%20Email%20Provider.md).

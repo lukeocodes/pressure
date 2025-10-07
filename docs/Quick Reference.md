@@ -70,10 +70,26 @@ MOCK_API_URL=http://localhost:3001  # Optional: use mock APIs
 ### Production (Netlify)
 
 ```env
-EMAIL_PROVIDER=sendgrid  # or mailgun
-EMAIL_API_KEY=your_key_here
+# Direct sending with SendGrid
+EMAIL_PROVIDER=sendgrid
+EMAIL_SENDGRID_API_KEY=your_key_here
 EMAIL_FROM=noreply@yourdomain.com
 EMAIL_FROM_NAME=Campaign Name
+
+# Or with Mailgun
+EMAIL_PROVIDER=mailgun
+EMAIL_MAILGUN_API_KEY=your_key_here
+EMAIL_MAILGUN_DOMAIN=mg.yourdomain.com
+EMAIL_FROM=noreply@yourdomain.com
+EMAIL_FROM_NAME=Campaign Name
+
+# Queue-based sending with Netlify Blobs
+EMAIL_PROVIDER=netlify-blobs
+EMAIL_NETLIFY_BLOBS_PROCESSOR_PROVIDER=sendgrid
+EMAIL_SENDGRID_API_KEY=your_key_here
+EMAIL_NETLIFY_BLOBS_MAX_ATTEMPTS=3
+EMAIL_NETLIFY_BLOBS_BATCH_SIZE=10
+
 JWT_SECRET=long-random-secure-string
 # BASE_URL auto-detected
 ```
@@ -136,6 +152,7 @@ pressure/
 - [Architecture](Architecture.md) - System design
 - [Campaign Configuration](Campaign%20Configuration.md) - Campaign setup
 - [Email Service Abstraction](Email%20Service%20Abstraction.md) - Email providers
+- [Netlify Blobs Email Provider](Netlify%20Blobs%20Email%20Provider.md) - Queue-based email delivery
 - [Postcode Validation Service](Postcode%20Validation%20Service.md) - Postcode validation
 - [Testing](Testing.md) - Testing guide
 - [Data Sources and Licensing](Data%20Sources%20And%20Licensing.md) - API licensing

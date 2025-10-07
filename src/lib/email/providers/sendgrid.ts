@@ -3,22 +3,22 @@ import type { EmailOptions, EmailResult } from '../../types';
 
 /**
  * SendGrid email provider
- * Requires: EMAIL_API_KEY environment variable
+ * Requires: EMAIL_SENDGRID_API_KEY environment variable
  */
 export class SendGridEmailService extends BaseEmailService {
   private apiKey: string;
-  
+
   constructor(apiKey: string, fromEmail: string, fromName: string) {
     super(fromEmail, fromName);
     this.apiKey = apiKey;
   }
-  
+
   async sendEmail(options: EmailOptions): Promise<EmailResult> {
     try {
       const to = this.normalizeRecipients(options.to);
       const cc = options.cc ? this.normalizeRecipients(options.cc) : undefined;
       const bcc = options.bcc ? this.normalizeRecipients(options.bcc) : undefined;
-      
+
       const payload = {
         personalizations: [
           {
@@ -39,15 +39,15 @@ export class SendGridEmailService extends BaseEmailService {
           },
           ...(options.html
             ? [
-                {
-                  type: 'text/html',
-                  value: options.html,
-                },
-              ]
+              {
+                type: 'text/html',
+                value: options.html,
+              },
+            ]
             : []),
         ],
       };
-      
+
       const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: {
@@ -56,7 +56,7 @@ export class SendGridEmailService extends BaseEmailService {
         },
         body: JSON.stringify(payload),
       });
-      
+
       if (!response.ok) {
         const error = await response.text();
         console.error('SendGrid error:', error);
@@ -65,9 +65,9 @@ export class SendGridEmailService extends BaseEmailService {
           error: `SendGrid API error: ${response.status}`,
         };
       }
-      
+
       const messageId = response.headers.get('x-message-id') || `sendgrid-${Date.now()}`;
-      
+
       return {
         success: true,
         messageId,
