@@ -31,6 +31,7 @@ User Request → Netlify Function → Netlify Blobs (Queue)
    - Implements the `EmailService` interface
    - Queues emails as JSON objects in Netlify Blobs
    - Generates unique job IDs for each email
+   - Uses `connectLambda()` to properly initialize Netlify Blobs context in Functions
 
 2. **process-email-queue API** (`netlify/functions/process-email-queue.ts`)
 
@@ -223,17 +224,27 @@ Set environment variable to use Netlify Blobs:
 EMAIL_PROVIDER=netlify-blobs
 ```
 
-Your existing code works unchanged:
+Your existing code needs the Netlify event passed to the factory:
 
 ```typescript
-const emailService = createEmailService();
-await emailService.sendEmail({
-  to: "mp@parliament.uk",
-  subject: "Campaign Message",
-  text: "Email content...",
-});
-// Email is now queued, not sent immediately
+// In a Netlify Function
+export const handler: Handler = async (
+  event: HandlerEvent,
+  context: HandlerContext
+) => {
+  // Pass the event to createEmailService for Netlify Blobs context
+  const emailService = createEmailService(event);
+
+  await emailService.sendEmail({
+    to: "mp@parliament.uk",
+    subject: "Campaign Message",
+    text: "Email content...",
+  });
+  // Email is now queued, not sent immediately
+};
 ```
+
+**Important:** When using `netlify-blobs` provider, you must pass the Netlify Lambda event to `createEmailService(event)`. This is required for the `connectLambda()` call that initializes the Netlify Blobs context.
 
 ### 2. External Consumer Processes Queue
 
@@ -416,6 +427,8 @@ From the [Netlify Blobs documentation](https://docs.netlify.com/build/data-and-s
 - Verify function logs for errors
 - Confirm `@netlify/blobs` package is installed
 - Check Netlify Blobs UI to see if jobs are created
+- Ensure you're passing the event to `createEmailService(event)` in Netlify Functions
+- If you see `MissingBlobsEnvironmentError`, verify that `connectLambda(event)` is being called
 
 ### Emails Not Being Sent
 

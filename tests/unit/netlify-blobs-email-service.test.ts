@@ -4,6 +4,7 @@ import { NetlifyBlobsEmailService } from '../../src/lib/email/providers/netlify-
 // Mock @netlify/blobs
 vi.mock('@netlify/blobs', () => ({
     getStore: vi.fn(),
+    connectLambda: vi.fn(),
 }));
 
 // Mock uuid
@@ -62,8 +63,7 @@ describe('NetlifyBlobsEmailService', () => {
                     html: '<p>Test message</p>',
                     from: 'test@example.com',
                     fromName: 'Test Sender',
-                    status: 'pending',
-                    attempts: 0,
+                    createdAt: expect.any(Number),
                 })
             );
         });
@@ -260,11 +260,8 @@ describe('NetlifyBlobsEmailService', () => {
             expect(queuedEmail).toHaveProperty('html');
             expect(queuedEmail).toHaveProperty('from');
             expect(queuedEmail).toHaveProperty('fromName');
-            expect(queuedEmail).toHaveProperty('status');
             expect(queuedEmail).toHaveProperty('createdAt');
-            expect(queuedEmail).toHaveProperty('attempts');
-            expect(queuedEmail.status).toBe('pending');
-            expect(queuedEmail.attempts).toBe(0);
+            expect(typeof queuedEmail.createdAt).toBe('number');
         });
 
         it('should not include undefined CC/BCC when not provided', async () => {

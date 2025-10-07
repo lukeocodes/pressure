@@ -1,4 +1,4 @@
-import { getStore } from '@netlify/blobs';
+import { getStore, connectLambda } from '@netlify/blobs';
 import { BaseEmailService } from '../service';
 import type { EmailOptions, EmailResult } from '../../types';
 import { v4 as uuid } from 'uuid';
@@ -10,14 +10,21 @@ import { v4 as uuid } from 'uuid';
  */
 export class NetlifyBlobsEmailService extends BaseEmailService {
     private storeName: string;
+    private lambdaEvent?: any;
 
-    constructor(fromEmail: string, fromName: string, storeName: string = 'email-queue') {
+    constructor(fromEmail: string, fromName: string, storeName: string = 'email-queue', lambdaEvent?: any) {
         super(fromEmail, fromName);
         this.storeName = storeName;
+        this.lambdaEvent = lambdaEvent;
     }
 
     async sendEmail(options: EmailOptions): Promise<EmailResult> {
         try {
+            // Connect Lambda context if running in Netlify Functions
+            if (this.lambdaEvent) {
+                connectLambda(this.lambdaEvent);
+            }
+
             const store = getStore(this.storeName);
 
             // Generate unique ID for this email job

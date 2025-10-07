@@ -55,7 +55,7 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
         const magicLink = `${baseUrl}/verify?token=${token}`;
 
         // Send email with magic link
-        const emailService = createEmailService();
+        const emailService = createEmailService(event);
 
         const emailText = `Hi ${name},
 

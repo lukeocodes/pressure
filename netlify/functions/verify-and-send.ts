@@ -46,7 +46,7 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
         const campaign = getCampaign();
 
         // Prepare email to MP using shared template generator
-        const emailService = createEmailService();
+        const emailService = createEmailService(event);
 
         // Use emailBody if provided, otherwise fall back to description
         const campaignContent = campaign.emailBody || campaign.description;

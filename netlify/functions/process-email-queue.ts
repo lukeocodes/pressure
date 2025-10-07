@@ -1,5 +1,5 @@
 import type { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
-import { getStore } from '@netlify/blobs';
+import { getStore, connectLambda } from '@netlify/blobs';
 
 export interface EmailJob {
     id: string;
@@ -74,6 +74,9 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
     const defaultBatchSize = parseInt(process.env.EMAIL_NETLIFY_BLOBS_DEFAULT_BATCH_SIZE || '10', 10);
 
     try {
+        // Connect Lambda context for Netlify Functions
+        connectLambda(event as any);
+
         const store = getStore(storeName);
         const request: QueueRequest = JSON.parse(event.body || '{}');
 
